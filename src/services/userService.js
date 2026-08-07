@@ -7,12 +7,12 @@
  * at REST endpoints later without touching components.
  *
  * FUTURE BACKEND mapping:
- *   getUsers()    -> GET    /api/users        (admin only)
- *   addUser()     -> POST   /api/users        (admin only)
- *   updateUser()  -> PUT    /api/users/:id    (admin only)
- *   deleteUser()  -> DELETE /api/users/:id    (admin only)
+ *   getUsers()     -> GET    /api/users        (admin only)
+ *   addUser()      -> POST   /api/users        (admin only)
+ *   updateUser()   -> PUT    /api/users/:id    (admin only)
+ *   deleteUser()   -> DELETE /api/users/:id    (admin only)
  *   findByUsername() -> handled server-side during login, not exposed as an
- *                        endpoint at all in a real backend.
+ *                       endpoint at all in a real backend.
  * ---------------------------------------------------------------------------
  */
 import { localStorageService } from './localStorageService';
@@ -23,19 +23,33 @@ const COLLECTION = STORAGE_KEYS.USERS;
 
 const DEFAULT_ADMIN = {
   name: 'Administrator',
-  username: 'AAZHI_19',
+  username: 'Aazhi_19',
   email: '',
   role: ROLES.ADMIN,
   active: true
 };
 const DEFAULT_ADMIN_PASSWORD = 'Muruga_26';
 
-/** Creates a default admin account on first run so /admin is reachable out of the box. */
+/** Creates a default admin account on first run or wipes legacy default accounts. */
 async function ensureSeeded() {
   const existing = await localStorageService.getAll(COLLECTION);
-  if (existing.length > 0) return;
-  const passwordHash = await hashPassword(DEFAULT_ADMIN_PASSWORD);
-  await localStorageService.create(COLLECTION, { ...DEFAULT_ADMIN, passwordHash });
+
+  // Check if the old 'admin' user is present in local storage
+  const hasLegacyAdmin = existing.some(
+    (u) => u.username && u.username.toLowerCase() === 'admin'
+  );
+
+  // If local storage has no users OR contains the old legacy admin, purge and seed fresh
+  if (existing.length === 0 || hasLegacyAdmin) {
+    if (hasLegacyAdmin) {
+      // Clear out stored legacy users and active session
+      await localStorageService.setAll(COLLECTION, []);
+      await localStorageService.setObject(STORAGE_KEYS.SESSION, null);
+    }
+
+    const passwordHash = await hashPassword(DEFAULT_ADMIN_PASSWORD);
+    await localStorageService.create(COLLECTION, { ...DEFAULT_ADMIN, passwordHash });
+  }
 }
 
 function sanitize(user) {

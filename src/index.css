@@ -64,7 +64,7 @@
   --color-text: #f1f5f9;
   --color-text-muted: #94a3b8;
   
-  --color-primary: #38bdf8;
+  --color-primary: #ffffff;
   --color-primary-hover: #0284c7;
   --color-primary-contrast: #0f172a;
   
@@ -75,6 +75,38 @@
   color-scheme: dark;
 }
 
+/* Ensure the Brand Title is crisp white in Dark Mode */
+[data-theme='dark'] .sidebar__brand-name {
+  color: #ffffff !important;
+}
+
+/* Sidebar Active & Hover Link Text Color in Dark Mode */
+[data-theme='dark'] .sidebar__link--active,
+[data-theme='dark'] .sidebar__link:hover {
+  background-color: #ffffff !important;
+  color: #0f1e36 !important; /* Dark Navy text on white background */
+}
+
+/* Ensure SVG / Icons inside active sidebar links turn dark too */
+[data-theme='dark'] .sidebar__link--active .sidebar__icon,
+[data-theme='dark'] .sidebar__link:hover .sidebar__icon {
+  color: #0f1e36 !important;
+}
+
+/* Secondary / Light Buttons in Dark Mode (+ New Customer, etc.) */
+[data-theme='dark'] .btn--secondary,
+[data-theme='dark'] button.btn-secondary,
+[data-theme='dark'] .btn-light {
+  background-color: #f1f5f9 !important;
+  color: #0f1e36 !important; /* Dark Navy text */
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme='dark'] .btn--secondary:hover,
+[data-theme='dark'] button.btn-secondary:hover {
+  background-color: #ffffff !important;
+  color: #0f1e36 !important;
+}
 /* ---- Reset & Typography ---- */
 * {
   box-sizing: border-box;

@@ -102,6 +102,46 @@
   border-color: #e2e8f0 !important;
 }
 
+/* Customer Avatar Initial Text Color */
+.customer-avatar,
+.avatar,
+.customer-card__avatar {
+  background-color: #fef08a; /* Light yellow background */
+  color: #0f1e36 !important;  /* Dark navy text for high contrast */
+  font-weight: 700;
+}
+
+/* Fix input text visibility in dark theme */
+[data-theme='dark'] input,
+[data-theme='dark'] select,
+[data-theme='dark'] textarea {
+  color: #f1f5f9 !important; /* Bright white/slate text */
+  background-color: #0b1320 !important; /* Dark input background */
+  border-color: #1e2d42 !important;
+}
+
+/* Fix browser autofill / selection beige background in dark mode */
+[data-theme='dark'] input:-webkit-autofill,
+[data-theme='dark'] input:-webkit-autofill:hover, 
+[data-theme='dark'] input:-webkit-autofill:focus, 
+[data-theme='dark'] input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff !important;
+  -webkit-box-shadow: 0 0 0px 1000px #0b1320 inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Selected text background in dark mode */
+[data-theme='dark'] ::selection {
+  background-color: #38bdf8 !important;
+  color: #0f172a !important;
+}
+/* Ensure avatar initial stays dark even in dark mode */
+[data-theme='dark'] .customer-avatar,
+[data-theme='dark'] .avatar,
+[data-theme='dark'] .customer-card__avatar {
+  background-color: #fef08a;
+  color: #0f1e36 !important;
+}
 [data-theme='dark'] .btn--secondary:hover,
 [data-theme='dark'] button.btn-secondary:hover {
   background-color: #ffffff !important;

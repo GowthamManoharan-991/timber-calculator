@@ -16,7 +16,7 @@ export default function CustomerCard({ customer, onEdit, onDelete, onCreateQuota
       </div>
       <div className="customer-card__actions">
         <button className="icon-btn" title={t('customers.newQuotation')} onClick={() => onCreateQuotation(customer)}>
-          🧮
+          📝
         </button>
         <button className="icon-btn" title={t('common.edit')} onClick={() => onEdit(customer)}>
           ✏️

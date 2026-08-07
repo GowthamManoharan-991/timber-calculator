@@ -5,11 +5,11 @@ export default function MobileNav() {
   const { t } = useLanguage();
 
   const items = [
-    { to: '/', label: t('nav.home'), icon: '\u25A6', end: true },
-    { to: '/calculator', label: t('nav.calculator'), icon: '\u{1F9EE}' },
-    { to: '/customers', label: t('nav.customers'), icon: '\u{1F465}' },
-    { to: '/history', label: t('nav.history'), icon: '\u{1F553}' },
-    { to: '/reports', label: t('nav.reports'), icon: '\u{1F4CA}' }
+    { to: '/', label: t('nav.home') || 'Home', icon: '🏠', end: true },
+    { to: '/calculator', label: t('nav.calculator') || 'Quotations', icon: '📝' },
+    { to: '/customers', label: t('nav.customers') || 'Customers', icon: '👥' },
+    { to: '/history', label: t('nav.history') || 'History', icon: '🕒' },
+    { to: '/reports', label: t('nav.reports') || 'Reports', icon: '📊' }
   ];
 
   return (
@@ -21,8 +21,8 @@ export default function MobileNav() {
           end={item.end}
           className={({ isActive }) => `mobile-nav__link ${isActive ? 'mobile-nav__link--active' : ''}`}
         >
-          <span aria-hidden="true">{item.icon}</span>
-          <span>{item.label}</span>
+          <span className="mobile-nav__icon" aria-hidden="true">{item.icon}</span>
+          <span className="mobile-nav__label">{item.label}</span>
         </NavLink>
       ))}
     </nav>

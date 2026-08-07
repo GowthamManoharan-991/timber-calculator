@@ -22,6 +22,7 @@ export const translations = {
   // ---- Navigation ----
   'nav.dashboard': { en: 'Dashboard', ta: 'முகப்பு' },
   'nav.quotations': { en: 'Quotations', ta: 'மேற்கோள்கள்' },
+  'nav.calculator': { en: 'Quotations', ta: 'மேற்கோள்கள்' },
   'nav.customers': { en: 'Customers', ta: 'வாடிக்கையாளர்கள்' },
   'nav.history': { en: 'History', ta: 'வரலாறு' },
   'nav.invoices': { en: 'Invoices', ta: 'விலைப்பட்டியல்கள்' },

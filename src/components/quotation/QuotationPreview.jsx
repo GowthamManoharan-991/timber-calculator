@@ -67,7 +67,9 @@ export default function QuotationPreview({ quotation, settings }) {
 
         return (
           <section key={section.id || sIdx} className="quotation-doc__section">
-            <h4>{woodName(section)}</h4>
+            <h4 className="wood-badge" style={{ display: 'inline-block', color: '#0f172a', backgroundColor: '#fef08a', padding: '4px 12px', borderRadius: '16px', fontWeight: '700' }}>
+  {woodName(section)}
+</h4>
             <table className="quotation-doc__table">
               <thead>
                 <tr>

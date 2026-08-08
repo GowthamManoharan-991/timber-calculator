@@ -44,7 +44,7 @@ export default function Dashboard() {
       >
         {recent.length === 0 ? (
           <EmptyState
-            icon="🧮"
+            icon="📝"
             title={t('dashboard.noQuotations')}
             message=""
             action={

@@ -130,6 +130,31 @@
   transition: background-color 5000s ease-in-out 0s;
 }
 
+/* ---- Wood Type / Section Badges ---- */
+.wood-badge,
+.section-badge,
+.wood-type-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.3px;
+  /* Light Theme Defaults */
+  background-color: #fef3c7 !important; /* Soft Amber background */
+  color: #78350f !important;            /* Deep Warm Brown text */
+  border: 1px solid #fde68a;
+}
+
+/* Dark Theme Badge Overrides */
+[data-theme='dark'] .wood-badge,
+[data-theme='dark'] .section-badge,
+[data-theme='dark'] .wood-type-tag {
+  background-color: #1e293b !important; /* Slate Dark Surface */
+  color: #38bdf8 !important;            /* Vibrant Cyan Text */
+  border: 1px solid #334155 !important;
+}
+
 /* Selected text background in dark mode */
 [data-theme='dark'] ::selection {
   background-color: #38bdf8 !important;

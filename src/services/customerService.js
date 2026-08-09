@@ -2,7 +2,7 @@
  * customerService
  * ---------------------------------------------------------------------------
  * Domain-level API for Customers powered by the central MySQL database REST API.
- * Uses localStorage as an offline cache.
+ * Uses localStorage as an offline cache fallback.
  * ---------------------------------------------------------------------------
  */
 
@@ -27,7 +27,7 @@ export const customerService = {
         return Array.isArray(data) ? data.sort((a, b) => (a.name || '').localeCompare(b.name || '')) : [];
       }
     } catch (err) {
-      console.warn('Backend offline/unreachable, loading local cached customers:', err.message);
+      console.warn('Backend server offline/unreachable, loading local cached customers:', err.message);
     }
 
     const localList = (await localStorageService.getAll(STORAGE_KEYS.CUSTOMERS)) || [];
@@ -75,8 +75,8 @@ export const customerService = {
 
       throw new Error(responseData.message || responseData.error || 'Database rejected customer record');
     } catch (err) {
-      console.warn('Backend save failed, saving customer to local storage:', err.message);
-      return await localStorageService.create(STORAGE_KEYS.CUSTOMERS, payload);
+      console.warn('Backend save failed:', err.message);
+      throw err;
     }
   },
 

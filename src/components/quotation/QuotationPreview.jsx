@@ -7,7 +7,6 @@ export default function QuotationPreview({ quotation, settings }) {
   const { t } = useLanguage();
   if (!quotation) return null;
 
-  // Extract nested data cleanly (supports direct objects & parsed DB JSON)
   const customerSnapshot = quotation.customerSnapshot || quotation.fullData?.customerSnapshot || {
     name: quotation.customerName || quotation.customer_name,
     phone: quotation.phone,
@@ -26,43 +25,63 @@ export default function QuotationPreview({ quotation, settings }) {
   const activeCharges = CHARGE_TYPES.filter((c) => Number(charges[c.key]) > 0);
 
   return (
-    <div className="w-full max-w-full overflow-x-auto pb-4">
+    <div style={{ width: '100%', maxWidth: '100%', overflowX: 'auto', paddingBottom: '16px' }}>
       <div 
-        className="quotation-doc w-full box-border p-3 sm:p-6 bg-white rounded-xl shadow-sm border border-slate-200 text-slate-900" 
+        className="quotation-doc" 
         id="quotation-print-area"
-        style={{ maxWidth: '100%', boxSizing: 'border-box' }}
+        style={{
+          width: '100%',
+          maxWidth: '100%',
+          boxSizing: 'border-box',
+          padding: '12px',
+          backgroundColor: '#ffffff',
+          borderRadius: '12px',
+          border: '1px solid #e2e8f0',
+          color: '#0f172a'
+        }}
       >
-        <header className="quotation-doc__header flex flex-col sm:flex-row justify-between gap-4 pb-4 border-b border-slate-200">
-          <div className="quotation-doc__company">
-            {settings?.logo && <img src={settings.logo} alt="" className="quotation-doc__logo h-12 object-contain mb-2" />}
+        {/* Header - Left-Aligned Meta */}
+        <header style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingBottom: '12px', borderBottom: '1px solid #e2e8f0', textAlign: 'left' }}>
+          <div className="quotation-doc__company" style={{ textAlign: 'left' }}>
+            {settings?.logo && <img src={settings.logo} alt="" style={{ height: '48px', objectFit: 'contain', marginBottom: '8px' }} />}
             <div>
-              <h2 className="text-xl font-bold">{settings?.companyName || 'Your Timber Shop'}</h2>
-              {settings?.address && <p className="text-sm text-slate-600">{settings.address}</p>}
-              <p className="text-sm text-slate-600">
+              <h2 style={{ fontSize: '18px', fontWeight: '700', margin: '0' }}>{settings?.companyName || 'Your Timber Shop'}</h2>
+              {settings?.address && <p style={{ fontSize: '12px', color: '#475569', margin: '2px 0' }}>{settings.address}</p>}
+              <p style={{ fontSize: '12px', color: '#475569', margin: '2px 0' }}>
                 {settings?.phone && <>Ph: {settings.phone} </>}
                 {settings?.gstNumber && <>· GSTIN: {settings.gstNumber}</>}
               </p>
             </div>
           </div>
-          <div className="quotation-doc__meta sm:text-right">
-            <h3 className="text-lg font-bold text-slate-800">{t('quotation.title')}</h3>
-            <p className="text-sm">
+
+          {/* Left-aligned "QUOTATION" header block */}
+          <div className="quotation-doc__meta" style={{ textAlign: 'left', paddingTop: '4px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 4px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              {t('quotation.title')}
+            </h3>
+            <p style={{ fontSize: '12px', margin: '2px 0', color: '#334155' }}>
               <strong>{t('quotation.number')}:</strong> {quotation.quotationNumber || quotation.quotation_number}
             </p>
-            <p className="text-sm">
+            <p style={{ fontSize: '12px', margin: '2px 0', color: '#334155' }}>
               <strong>{t('common.date')}:</strong> {formatDate(quotation.date || quotation.created_at)}
             </p>
           </div>
         </header>
 
-        <section className="quotation-doc__customer my-4 pb-4 border-b border-slate-100">
-          <h4 className="text-xs uppercase tracking-wider font-bold text-slate-400 mb-1">{t('quotation.billTo')}</h4>
-          <p className="quotation-doc__customer-name font-bold text-slate-900">{customerSnapshot?.name || 'Guest Customer'}</p>
-          {customerSnapshot?.phone && <p className="text-sm text-slate-600">Ph: {customerSnapshot.phone}</p>}
-          {customerSnapshot?.address && <p className="text-sm text-slate-600">{customerSnapshot.address}</p>}
-          {customerSnapshot?.gstNumber && <p className="text-sm text-slate-600">GSTIN: {customerSnapshot.gstNumber}</p>}
+        {/* Bill To */}
+        <section style={{ margin: '12px 0', paddingBottom: '12px', borderBottom: '1px solid #f1f5f9', textAlign: 'left' }}>
+          <h4 style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: '700', color: '#94a3b8', margin: '0 0 2px 0' }}>
+            {t('quotation.billTo')}
+          </h4>
+          <p style={{ fontSize: '14px', fontWeight: '700', margin: '0 0 2px 0', color: '#0f172a' }}>
+            {customerSnapshot?.name || 'Guest Customer'}
+          </p>
+          {customerSnapshot?.phone && <p style={{ fontSize: '12px', color: '#475569', margin: '2px 0' }}>Ph: {customerSnapshot.phone}</p>}
+          {customerSnapshot?.address && <p style={{ fontSize: '12px', color: '#475569', margin: '2px 0' }}>{customerSnapshot.address}</p>}
+          {customerSnapshot?.gstNumber && <p style={{ fontSize: '12px', color: '#475569', margin: '2px 0' }}>GSTIN: {customerSnapshot.gstNumber}</p>}
         </section>
 
+        {/* Sections & Tables */}
         {sections.map((section, sIdx) => {
           const rows = section.rows || [];
           const totals = calculateSectionTotals ? calculateSectionTotals(section) : {
@@ -71,26 +90,34 @@ export default function QuotationPreview({ quotation, settings }) {
           };
 
           return (
-            <section key={section.id || sIdx} className="quotation-doc__section my-4">
+            <section key={section.id || sIdx} style={{ margin: '12px 0', textAlign: 'left' }}>
               <h4 
-                className="wood-badge mb-2" 
-                style={{ display: 'inline-block', color: '#0f172a', backgroundColor: '#fef08a', padding: '4px 12px', borderRadius: '16px', fontWeight: '700', fontSize: '0.85rem' }}
+                style={{
+                  display: 'inline-block',
+                  color: '#0f172a',
+                  backgroundColor: '#fef08a',
+                  padding: '3px 10px',
+                  borderRadius: '14px',
+                  fontWeight: '700',
+                  fontSize: '12px',
+                  marginBottom: '8px'
+                }}
               >
                 {woodName(section)}
               </h4>
               
-              <div className="w-full overflow-x-auto my-2">
-                <table className="quotation-doc__table w-full text-xs sm:text-sm text-left border-collapse">
+              <div style={{ width: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                <table style={{ width: '100%', minWidth: '450px', fontSize: '11px', borderCollapse: 'collapse', textAlign: 'left' }}>
                   <thead>
-                    <tr className="bg-slate-100 text-slate-700">
-                      <th className="p-1.5 sm:p-2 border border-slate-200">#</th>
-                      <th className="p-1.5 sm:p-2 border border-slate-200">{t('calculator.width')}</th>
-                      <th className="p-1.5 sm:p-2 border border-slate-200">{t('calculator.thickness')}</th>
-                      <th className="p-1.5 sm:p-2 border border-slate-200">{t('calculator.length')}</th>
-                      <th className="p-1.5 sm:p-2 border border-slate-200">{t('calculator.quantity')}</th>
-                      <th className="p-1.5 sm:p-2 border border-slate-200">{t('calculator.cft')}</th>
-                      <th className="p-1.5 sm:p-2 border border-slate-200">{t('calculator.rate')}</th>
-                      <th className="p-1.5 sm:p-2 border border-slate-200">{t('calculator.amount')}</th>
+                    <tr style={{ backgroundColor: '#f8fafc', color: '#334155' }}>
+                      <th style={{ padding: '6px 4px', border: '1px solid #e2e8f0', textAlign: 'center' }}>#</th>
+                      <th style={{ padding: '6px 4px', border: '1px solid #e2e8f0' }}>{t('calculator.width')}</th>
+                      <th style={{ padding: '6px 4px', border: '1px solid #e2e8f0' }}>{t('calculator.thickness')}</th>
+                      <th style={{ padding: '6px 4px', border: '1px solid #e2e8f0' }}>{t('calculator.length')}</th>
+                      <th style={{ padding: '6px 4px', border: '1px solid #e2e8f0', textAlign: 'center' }}>{t('calculator.quantity')}</th>
+                      <th style={{ padding: '6px 4px', border: '1px solid #e2e8f0', textAlign: 'right' }}>{t('calculator.cft')}</th>
+                      <th style={{ padding: '6px 4px', border: '1px solid #e2e8f0', textAlign: 'right' }}>{t('calculator.rate')}</th>
+                      <th style={{ padding: '6px 4px', border: '1px solid #e2e8f0', textAlign: 'right' }}>{t('calculator.amount')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -99,25 +126,25 @@ export default function QuotationPreview({ quotation, settings }) {
                       const rowAmount = row.amount !== undefined ? Number(row.amount) : calculateRowAmount(row);
 
                       return (
-                        <tr key={row.id || idx} className="border-b border-slate-200">
-                          <td className="p-1.5 sm:p-2 border border-slate-200">{idx + 1}</td>
-                          <td className="p-1.5 sm:p-2 border border-slate-200">{row.width || 0}</td>
-                          <td className="p-1.5 sm:p-2 border border-slate-200">{row.thickness || row.height || 0}</td>
-                          <td className="p-1.5 sm:p-2 border border-slate-200">{row.length || 0}</td>
-                          <td className="p-1.5 sm:p-2 border border-slate-200">{row.quantity || row.pieces || 1}</td>
-                          <td className="p-1.5 sm:p-2 border border-slate-200 font-semibold">{formatNumber(rowCft, 3)}</td>
-                          <td className="p-1.5 sm:p-2 border border-slate-200">{formatCurrency(row.rate || 0)}</td>
-                          <td className="p-1.5 sm:p-2 border border-slate-200 font-semibold">{formatCurrency(rowAmount)}</td>
+                        <tr key={row.id || idx}>
+                          <td style={{ padding: '6px 4px', border: '1px solid #e2e8f0', textAlign: 'center' }}>{idx + 1}</td>
+                          <td style={{ padding: '6px 4px', border: '1px solid #e2e8f0' }}>{row.width || 0}</td>
+                          <td style={{ padding: '6px 4px', border: '1px solid #e2e8f0' }}>{row.thickness || row.height || 0}</td>
+                          <td style={{ padding: '6px 4px', border: '1px solid #e2e8f0' }}>{row.length || 0}</td>
+                          <td style={{ padding: '6px 4px', border: '1px solid #e2e8f0', textAlign: 'center' }}>{row.quantity || row.pieces || 1}</td>
+                          <td style={{ padding: '6px 4px', border: '1px solid #e2e8f0', textAlign: 'right', fontWeight: '600' }}>{formatNumber(rowCft, 3)}</td>
+                          <td style={{ padding: '6px 4px', border: '1px solid #e2e8f0', textAlign: 'right' }}>{formatCurrency(row.rate || 0)}</td>
+                          <td style={{ padding: '6px 4px', border: '1px solid #e2e8f0', textAlign: 'right', fontWeight: '600' }}>{formatCurrency(rowAmount)}</td>
                         </tr>
                       );
                     })}
                   </tbody>
                   <tfoot>
-                    <tr className="bg-slate-50 font-bold">
-                      <td colSpan={5} className="p-1.5 sm:p-2 border border-slate-200 text-right">Subtotal:</td>
-                      <td className="p-1.5 sm:p-2 border border-slate-200">{formatNumber(totals.totalCFT || 0, 3)}</td>
-                      <td className="p-1.5 sm:p-2 border border-slate-200"></td>
-                      <td className="p-1.5 sm:p-2 border border-slate-200">{formatCurrency(totals.totalAmount || 0)}</td>
+                    <tr style={{ backgroundColor: '#f8fafc', fontWeight: '700' }}>
+                      <td colSpan={5} style={{ padding: '6px 4px', border: '1px solid #e2e8f0', textAlign: 'right' }}>Subtotal:</td>
+                      <td style={{ padding: '6px 4px', border: '1px solid #e2e8f0', textAlign: 'right' }}>{formatNumber(totals.totalCFT || 0, 3)}</td>
+                      <td style={{ padding: '6px 4px', border: '1px solid #e2e8f0' }}></td>
+                      <td style={{ padding: '6px 4px', border: '1px solid #e2e8f0', textAlign: 'right' }}>{formatCurrency(totals.totalAmount || 0)}</td>
                     </tr>
                   </tfoot>
                 </table>
@@ -126,16 +153,17 @@ export default function QuotationPreview({ quotation, settings }) {
           );
         })}
 
+        {/* Additional Charges */}
         {activeCharges.length > 0 && (
-          <section className="quotation-doc__charges my-4">
-            <h4 className="text-sm font-bold text-slate-800 mb-2">{t('calculator.additionalCharges')}</h4>
-            <div className="w-full overflow-x-auto">
-              <table className="quotation-doc__table quotation-doc__table--compact w-full max-w-xs text-xs sm:text-sm">
+          <section style={{ margin: '12px 0', textAlign: 'left' }}>
+            <h4 style={{ fontSize: '12px', fontWeight: '700', marginBottom: '4px' }}>{t('calculator.additionalCharges')}</h4>
+            <div style={{ width: '100%', overflowX: 'auto' }}>
+              <table style={{ width: '100%', maxWidth: '280px', fontSize: '12px' }}>
                 <tbody>
                   {activeCharges.map((c) => (
-                    <tr key={c.key} className="border-b border-slate-200">
-                      <td className="py-1.5 px-2">{t(`calculator.charge.${c.key}`)}</td>
-                      <td className="py-1.5 px-2 font-semibold text-right">{formatCurrency(charges[c.key])}</td>
+                    <tr key={c.key} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                      <td style={{ padding: '4px 6px' }}>{t(`calculator.charge.${c.key}`)}</td>
+                      <td style={{ padding: '4px 6px', fontWeight: '600', textAlign: 'right' }}>{formatCurrency(charges[c.key])}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -144,34 +172,36 @@ export default function QuotationPreview({ quotation, settings }) {
           </section>
         )}
 
-        <section className="quotation-doc__totals my-4 ml-auto max-w-xs border-t-2 border-slate-900 pt-2 space-y-1 text-xs sm:text-sm">
-          <div className="quotation-doc__totals-row flex justify-between">
+        {/* Totals Section */}
+        <section style={{ margin: '12px 0 0 auto', maxWidth: '280px', borderTop: '2px solid #0f172a', paddingTop: '8px', fontSize: '12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0' }}>
             <span>{t('calculator.sectionTotalCft')}:</span>
-            <span className="font-semibold">{formatNumber(quotation.totalCFT || quotation.total_cft || 0, 3)}</span>
+            <span style={{ fontWeight: '600' }}>{formatNumber(quotation.totalCFT || quotation.total_cft || 0, 3)}</span>
           </div>
-          <div className="quotation-doc__totals-row flex justify-between">
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0' }}>
             <span>{t('calculator.materialAmount')}:</span>
-            <span className="font-semibold">{formatCurrency(quotation.materialTotal || quotation.grandTotal || 0)}</span>
+            <span style={{ fontWeight: '600' }}>{formatCurrency(quotation.materialTotal || quotation.grandTotal || 0)}</span>
           </div>
-          <div className="quotation-doc__totals-row flex justify-between">
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0' }}>
             <span>{t('calculator.additionalCharges')}:</span>
-            <span className="font-semibold">{formatCurrency(quotation.chargesTotal || 0)}</span>
+            <span style={{ fontWeight: '600' }}>{formatCurrency(quotation.chargesTotal || 0)}</span>
           </div>
-          <div className="quotation-doc__totals-row quotation-doc__totals-row--grand flex justify-between text-base font-bold text-slate-900 border-t border-slate-300 pt-1 mt-1">
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0 0 0', marginTop: '4px', borderTop: '1px solid #cbd5e1', fontSize: '14px', fontWeight: '800', color: '#0f172a' }}>
             <span>{t('calculator.grandTotal')}:</span>
             <span>{formatCurrency(quotation.grandTotal || quotation.total_amount || 0)}</span>
           </div>
         </section>
 
+        {/* Terms */}
         {settings?.terms && (
-          <section className="quotation-doc__terms my-4 pt-4 border-t border-slate-200 text-xs text-slate-600">
-            <h4 className="font-bold text-slate-800 mb-1">{t('quotation.termsTitle')}</h4>
-            <p>{settings.terms}</p>
+          <section style={{ margin: '12px 0 0 0', paddingTop: '12px', borderTop: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', textAlign: 'left' }}>
+            <h4 style={{ fontWeight: '700', color: '#1e293b', marginBottom: '2px' }}>{t('quotation.termsTitle')}</h4>
+            <p style={{ margin: '0' }}>{settings.terms}</p>
           </section>
         )}
 
-        <footer className="quotation-doc__footer mt-6 pt-4 border-t border-slate-200 text-center text-xs text-slate-500">
-          <p>{t('quotation.thankYou')}</p>
+        <footer style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #e2e8f0', textAlign: 'center', fontSize: '11px', color: '#64748b' }}>
+          <p style={{ margin: '0' }}>{t('quotation.thankYou')}</p>
         </footer>
       </div>
     </div>

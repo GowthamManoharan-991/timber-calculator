@@ -1743,3 +1743,100 @@ textarea {
     font-size: 16px;
   }
 }
+
+
+/* Prevent bottom fixed mobile navigation from blocking action buttons */
+@media (max-width: 768px) {
+  body, 
+  #root, 
+  .page, 
+  .main-content, 
+  main {
+    padding-bottom: 90px !important; /* Pushes bottom buttons above mobile navbar */
+  }
+
+  /* Make action buttons full-width and stacked neatly on mobile */
+  .calculator-actions,
+  .form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .calculator-actions button,
+  .form-actions button {
+    width: 100%;
+  }
+}
+
+/* ---- Mobile Navigation & Layout Padding Fixes ---- */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 65px;
+  background-color: var(--color-surface, #ffffff);
+  border-top: 1px solid var(--color-border, #e2e8f0);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  justify-content: space-around;
+  align-items: center;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.mobile-nav__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-decoration: none;
+  color: var(--color-text-muted, #64748b);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 0;
+  transition: all 0.15s ease;
+}
+
+.mobile-nav__icon {
+  font-size: 18px;
+  margin-bottom: 2px;
+  line-height: 1;
+}
+
+.mobile-nav__link--active {
+  color: var(--color-primary, #0f1e36);
+  font-weight: 700;
+}
+
+/* Dark Theme Adjustments */
+[data-theme='dark'] .mobile-nav {
+  background-color: #111c2e;
+  border-top-color: #1e2d42;
+}
+
+[data-theme='dark'] .mobile-nav__link {
+  color: #94a3b8;
+}
+
+[data-theme='dark'] .mobile-nav__link--active {
+  color: #38bdf8;
+}
+
+/* Show Mobile Bar & Push Page Content Above It */
+@media (max-width: 768px) {
+  .mobile-nav {
+    display: flex;
+  }
+
+  body, 
+  #root, 
+  .page, 
+  .main-content, 
+  main {
+    padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}

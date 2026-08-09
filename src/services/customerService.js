@@ -67,8 +67,8 @@ export const customerService = {
     const responseData = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      console.error('Database Customer Save Error:', responseData);
-      throw new Error(responseData.message || responseData.error || 'Database rejected customer record');
+      const serverError = responseData.message || responseData.error || responseData.sqlError || 'Database rejected customer record';
+      throw new Error(serverError);
     }
 
     // Keep local cache synced

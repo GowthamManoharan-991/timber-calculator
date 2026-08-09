@@ -2,7 +2,7 @@
  * customerService
  * ---------------------------------------------------------------------------
  * Domain-level API for Customers powered by the central MySQL database REST API.
- * Uses localStorage as a fallback when offline.
+ * Uses localStorage as an offline cache.
  * ---------------------------------------------------------------------------
  */
 
@@ -12,7 +12,7 @@ import { STORAGE_KEYS } from '../utils/constants';
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export const customerService = {
-  // 1. Get all customers from Database (with local storage fallback)
+  // 1. Get all customers from MySQL Database
   async getCustomers() {
     try {
       const controller = new AbortController();
@@ -27,7 +27,7 @@ export const customerService = {
         return Array.isArray(data) ? data.sort((a, b) => (a.name || '').localeCompare(b.name || '')) : [];
       }
     } catch (err) {
-      console.warn('Backend server offline/unreachable, loading local customers:', err.message);
+      console.warn('Backend offline/unreachable, loading local cached customers:', err.message);
     }
 
     const localList = (await localStorageService.getAll(STORAGE_KEYS.CUSTOMERS)) || [];
@@ -47,7 +47,7 @@ export const customerService = {
     return await localStorageService.getById(STORAGE_KEYS.CUSTOMERS, id);
   },
 
-  // 3. Add new customer to Database
+  // 3. Add new customer to MySQL Database
   async addCustomer(customer) {
     const payload = {
       name: customer.name?.trim(),
@@ -80,7 +80,7 @@ export const customerService = {
     }
   },
 
-  // 4. Update customer in Database
+  // 4. Update customer in MySQL Database
   async updateCustomer(id, updates) {
     try {
       const response = await fetch(`${API_BASE_URL}/customers/${id}`, {
@@ -101,7 +101,7 @@ export const customerService = {
     return await localStorageService.update(STORAGE_KEYS.CUSTOMERS, id, updates);
   },
 
-  // 5. Delete customer from Database
+  // 5. Delete customer from MySQL Database
   async deleteCustomer(id) {
     try {
       await fetch(`${API_BASE_URL}/customers/${id}`, {

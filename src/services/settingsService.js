@@ -1,9 +1,8 @@
 /**
  * settingsService
  * ---------------------------------------------------------------------------
- * Domain-level API for the single company-settings record.
- * Uses localStorage for instant offline access and syncs with the remote API
- * when available.
+ * Domain-level API for company settings.
+ * Prioritizes local storage for instant saves and offline persistence.
  * ---------------------------------------------------------------------------
  */
 import { localStorageService } from './localStorageService';
@@ -13,13 +12,13 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 export const settingsService = {
   async getSettings() {
-    // 1. Get local cached data immediately
+    // 1. Read from localStorage first
     const localSettings = await localStorageService.getObject(STORAGE_KEYS.SETTINGS, null);
 
-    // 2. Try fetching updated settings from the backend with a fast timeout (2.5s)
+    // 2. Safely attempt to fetch remote settings without overriding if backend fails
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2500);
+      const timeoutId = setTimeout(() => controller.abort(), 1500);
 
       const response = await fetch(`${API_BASE_URL}/settings`, {
         signal: controller.signal
@@ -28,34 +27,35 @@ export const settingsService = {
 
       if (response.ok) {
         const remoteSettings = await response.json();
-        const merged = { ...DEFAULT_SETTINGS, ...remoteSettings };
-        // Cache the updated remote settings locally
-        await localStorageService.setObject(STORAGE_KEYS.SETTINGS, merged);
-        return merged;
+        if (remoteSettings && Object.keys(remoteSettings).length > 0) {
+          const merged = { ...DEFAULT_SETTINGS, ...localSettings, ...remoteSettings };
+          await localStorageService.setObject(STORAGE_KEYS.SETTINGS, merged);
+          return merged;
+        }
       }
     } catch (err) {
-      console.warn('Backend unavailable or slow, loading local settings:', err.message);
+      console.warn('Backend unavailable, using stored settings:', err.message);
     }
 
-    // 3. Fallback to local storage or defaults
+    // 3. Fallback to saved local data or default configuration
     return localSettings ? { ...DEFAULT_SETTINGS, ...localSettings } : { ...DEFAULT_SETTINGS };
   },
 
   async saveSettings(settings) {
     const updated = { ...DEFAULT_SETTINGS, ...settings };
 
-    // Save locally immediately
+    // 1. Instantly save to local storage (guarantees persistence across refreshes)
     await localStorageService.setObject(STORAGE_KEYS.SETTINGS, updated);
 
-    // Attempt to sync to the remote backend server
+    // 2. Silently attempt backend sync
     try {
       await fetch(`${API_BASE_URL}/settings`, {
-        method: 'PUT',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updated)
       });
     } catch (err) {
-      console.warn('Could not sync settings to remote server:', err.message);
+      console.warn('Could not sync settings to backend API:', err.message);
     }
 
     return updated;

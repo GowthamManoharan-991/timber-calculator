@@ -1,8 +1,8 @@
 /**
  * customerService
  * ---------------------------------------------------------------------------
- * Domain-level API for Customers powered by the central MySQL database REST API.
- * Uses localStorage as an offline cache fallback.
+ * Domain-level API for Customers connected directly to the MySQL database REST API.
+ * Uses localStorageService as a local cache.
  * ---------------------------------------------------------------------------
  */
 
@@ -12,7 +12,7 @@ import { STORAGE_KEYS } from '../utils/constants';
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export const customerService = {
-  // 1. Get all customers from MySQL Database
+  // 1. Fetch all customers from MySQL Database
   async getCustomers() {
     try {
       const controller = new AbortController();
@@ -27,14 +27,14 @@ export const customerService = {
         return Array.isArray(data) ? data.sort((a, b) => (a.name || '').localeCompare(b.name || '')) : [];
       }
     } catch (err) {
-      console.warn('Backend server offline/unreachable, loading local cached customers:', err.message);
+      console.warn('Backend server offline or unreachable, returning local cache:', err.message);
     }
 
     const localList = (await localStorageService.getAll(STORAGE_KEYS.CUSTOMERS)) || [];
     return localList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
   },
 
-  // 2. Get single customer by ID
+  // 2. Fetch single customer by ID
   async getCustomer(id) {
     try {
       const response = await fetch(`${API_BASE_URL}/customers/${id}`);
@@ -42,12 +42,12 @@ export const customerService = {
         return await response.json();
       }
     } catch (err) {
-      console.warn(`Could not fetch customer ${id} from API, checking local storage:`, err.message);
+      console.warn(`Could not fetch customer ${id} from API:`, err.message);
     }
     return await localStorageService.getById(STORAGE_KEYS.CUSTOMERS, id);
   },
 
-  // 3. Add new customer to MySQL Database
+  // 3. Add new customer directly to MySQL Database
   async addCustomer(customer) {
     const payload = {
       name: customer.name?.trim(),
@@ -58,26 +58,24 @@ export const customerService = {
       notes: customer.notes?.trim() || ''
     };
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/customers`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+    const response = await fetch(`${API_BASE_URL}/customers`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
 
-      const responseData = await response.json().catch(() => ({}));
+    const responseData = await response.json().catch(() => ({}));
 
-      if (response.ok) {
-        const localList = (await localStorageService.getAll(STORAGE_KEYS.CUSTOMERS)) || [];
-        await localStorageService.setObject(STORAGE_KEYS.CUSTOMERS, [responseData, ...localList]);
-        return responseData;
-      }
-
+    if (!response.ok) {
+      console.error('Database Customer Save Error:', responseData);
       throw new Error(responseData.message || responseData.error || 'Database rejected customer record');
-    } catch (err) {
-      console.warn('Backend save failed:', err.message);
-      throw err;
     }
+
+    // Keep local cache synced
+    const localList = (await localStorageService.getAll(STORAGE_KEYS.CUSTOMERS)) || [];
+    await localStorageService.setObject(STORAGE_KEYS.CUSTOMERS, [responseData, ...localList]);
+
+    return responseData;
   },
 
   // 4. Update customer in MySQL Database
@@ -95,7 +93,7 @@ export const customerService = {
         return result;
       }
     } catch (err) {
-      console.warn('Backend update failed, updating local storage:', err.message);
+      console.warn('Backend update failed, updating local cache:', err.message);
     }
 
     return await localStorageService.update(STORAGE_KEYS.CUSTOMERS, id, updates);

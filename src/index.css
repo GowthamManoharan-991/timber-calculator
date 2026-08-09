@@ -2059,3 +2059,15 @@ body.dark .modal__footer,
     width: 100% !important;
   }
 }
+
+/* Mobile PDF Document Preview Fit */
+@media (max-width: 767px) {
+  #quotation-print-area,
+  .quotation-doc {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    padding: 12px !important;
+  }
+}

@@ -2,7 +2,7 @@
  * customerService
  * ---------------------------------------------------------------------------
  * Domain-level API for Customers powered by the central MySQL database REST API.
- * Uses localStorage as a fallback so the app stays functional offline.
+ * Uses localStorage as a fallback when offline.
  * ---------------------------------------------------------------------------
  */
 
@@ -23,7 +23,6 @@ export const customerService = {
 
       if (response.ok) {
         const data = await response.json();
-        // Sync local cache
         await localStorageService.setObject(STORAGE_KEYS.CUSTOMERS, data);
         return Array.isArray(data) ? data.sort((a, b) => (a.name || '').localeCompare(b.name || '')) : [];
       }
@@ -31,7 +30,7 @@ export const customerService = {
       console.warn('Backend server offline/unreachable, loading local customers:', err.message);
     }
 
-    const localList = await localStorageService.getArray(STORAGE_KEYS.CUSTOMERS);
+    const localList = (await localStorageService.getAll(STORAGE_KEYS.CUSTOMERS)) || [];
     return localList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
   },
 
@@ -69,8 +68,7 @@ export const customerService = {
       const responseData = await response.json().catch(() => ({}));
 
       if (response.ok) {
-        // Keep local storage cache updated
-        const localList = await localStorageService.getArray(STORAGE_KEYS.CUSTOMERS);
+        const localList = (await localStorageService.getAll(STORAGE_KEYS.CUSTOMERS)) || [];
         await localStorageService.setObject(STORAGE_KEYS.CUSTOMERS, [responseData, ...localList]);
         return responseData;
       }
@@ -78,7 +76,6 @@ export const customerService = {
       throw new Error(responseData.message || responseData.error || 'Database rejected customer record');
     } catch (err) {
       console.warn('Backend save failed, saving customer to local storage:', err.message);
-      // Fallback save locally if network fails
       return await localStorageService.create(STORAGE_KEYS.CUSTOMERS, payload);
     }
   },

@@ -1946,3 +1946,65 @@ body.dark .wood-row::after,
   color: #0f172a !important;
   border: 1px solid #e2e8f0;
 }
+
+/* LIGHT MODE MODAL (Default) */
+.modal {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.modal__header {
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.modal__header h3 {
+  color: #0f172a !important; /* Bold Dark Text in Light Mode */
+}
+
+.modal__close {
+  color: #64748b !important;
+}
+
+.modal__body {
+  color: #1e293b !important;
+}
+
+.modal__footer {
+  background-color: #f8fafc !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+/* DARK MODE MODAL OVERRIDES */
+[data-theme="dark"] .modal,
+body.dark .modal,
+.dark .modal {
+  background-color: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .modal__header,
+body.dark .modal__header,
+.dark .modal__header {
+  border-bottom: 1px solid #1e293b !important;
+}
+
+[data-theme="dark"] .modal__header h3,
+body.dark .modal__header h3,
+.dark .modal__header h3 {
+  color: #ffffff !important; /* Pure White Text in Dark Mode */
+}
+
+[data-theme="dark"] .modal__close,
+body.dark .modal__close,
+.dark .modal__close {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .modal__footer,
+body.dark .modal__footer,
+.dark .modal__footer {
+  background-color: #0f172a !important;
+  border-top: 1px solid #1e293b !important;
+}

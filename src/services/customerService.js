@@ -1,39 +1,54 @@
 /**
  * customerService
  * ---------------------------------------------------------------------------
- * Live Database REST API for Customers.
+ * Domain-level API for Customers powered by the central MySQL database REST API.
+ * Uses localStorage as a fallback so the app stays functional offline.
  * ---------------------------------------------------------------------------
  */
+
+import { localStorageService } from './localStorageService';
+import { STORAGE_KEYS } from '../utils/constants';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export const customerService = {
-  // 1. Fetch all customers from Database
+  // 1. Get all customers from Database (with local storage fallback)
   async getCustomers() {
     try {
-      const response = await fetch(`${API_BASE_URL}/customers`);
-      if (!response.ok) throw new Error('Failed to fetch customers');
-      const data = await response.json();
-      return Array.isArray(data) ? data.sort((a, b) => (a.name || '').localeCompare(b.name || '')) : [];
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+      const response = await fetch(`${API_BASE_URL}/customers`, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        const data = await response.json();
+        // Sync local cache
+        await localStorageService.setObject(STORAGE_KEYS.CUSTOMERS, data);
+        return Array.isArray(data) ? data.sort((a, b) => (a.name || '').localeCompare(b.name || '')) : [];
+      }
     } catch (err) {
-      console.error('Database getCustomers error:', err);
-      throw err;
+      console.warn('Backend server offline/unreachable, loading local customers:', err.message);
     }
+
+    const localList = await localStorageService.getArray(STORAGE_KEYS.CUSTOMERS);
+    return localList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
   },
 
-  // 2. Fetch single customer by ID
+  // 2. Get single customer by ID
   async getCustomer(id) {
     try {
       const response = await fetch(`${API_BASE_URL}/customers/${id}`);
-      if (!response.ok) throw new Error('Customer not found');
-      return await response.json();
+      if (response.ok) {
+        return await response.json();
+      }
     } catch (err) {
-      console.error(`Database getCustomer error for ${id}:`, err);
-      return null;
+      console.warn(`Could not fetch customer ${id} from API, checking local storage:`, err.message);
     }
+    return await localStorageService.getById(STORAGE_KEYS.CUSTOMERS, id);
   },
 
-  // 3. Save new customer directly to Database
+  // 3. Add new customer to Database
   async addCustomer(customer) {
     const payload = {
       name: customer.name?.trim(),
@@ -41,54 +56,68 @@ export const customerService = {
       email: customer.email?.trim() || '',
       address: customer.address?.trim() || '',
       gstNumber: customer.gstNumber?.trim() || customer.gst_number?.trim() || '',
-      gst_number: customer.gstNumber?.trim() || customer.gst_number?.trim() || '',
       notes: customer.notes?.trim() || ''
     };
 
-    const response = await fetch(`${API_BASE_URL}/customers`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/customers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Database rejected customer record');
+      const responseData = await response.json().catch(() => ({}));
+
+      if (response.ok) {
+        // Keep local storage cache updated
+        const localList = await localStorageService.getArray(STORAGE_KEYS.CUSTOMERS);
+        await localStorageService.setObject(STORAGE_KEYS.CUSTOMERS, [responseData, ...localList]);
+        return responseData;
+      }
+
+      throw new Error(responseData.message || responseData.error || 'Database rejected customer record');
+    } catch (err) {
+      console.warn('Backend save failed, saving customer to local storage:', err.message);
+      // Fallback save locally if network fails
+      return await localStorageService.create(STORAGE_KEYS.CUSTOMERS, payload);
     }
-
-    return await response.json();
   },
 
-  // 4. Update existing customer in Database
+  // 4. Update customer in Database
   async updateCustomer(id, updates) {
-    const response = await fetch(`${API_BASE_URL}/customers/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updates)
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/customers/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates)
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Failed to update customer in database');
+      if (response.ok) {
+        const result = await response.json();
+        await localStorageService.update(STORAGE_KEYS.CUSTOMERS, id, updates);
+        return result;
+      }
+    } catch (err) {
+      console.warn('Backend update failed, updating local storage:', err.message);
     }
 
-    return await response.json();
+    return await localStorageService.update(STORAGE_KEYS.CUSTOMERS, id, updates);
   },
 
   // 5. Delete customer from Database
   async deleteCustomer(id) {
-    const response = await fetch(`${API_BASE_URL}/customers/${id}`, {
-      method: 'DELETE'
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to delete customer from database');
+    try {
+      await fetch(`${API_BASE_URL}/customers/${id}`, {
+        method: 'DELETE'
+      });
+    } catch (err) {
+      console.warn('Backend delete failed, removing locally:', err.message);
     }
 
-    return true;
+    return await localStorageService.remove(STORAGE_KEYS.CUSTOMERS, id);
   },
 
-  // 6. Search customers from Database list
+  // 6. Search customers
   async searchCustomers(query) {
     const customers = await this.getCustomers();
     if (!query || !query.trim()) return customers;

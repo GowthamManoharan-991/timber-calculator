@@ -1,8 +1,7 @@
 /**
  * customerService
  * ---------------------------------------------------------------------------
- * Domain-level API for customers powered by live Database REST API endpoints.
- * All operations fetch directly from and write to the central server.
+ * Live Database REST API for Customers.
  * ---------------------------------------------------------------------------
  */
 
@@ -13,12 +12,12 @@ export const customerService = {
   async getCustomers() {
     try {
       const response = await fetch(`${API_BASE_URL}/customers`);
-      if (!response.ok) throw new Error('Failed to fetch customers from database');
-      const customers = await response.json();
-      return customers.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      if (!response.ok) throw new Error('Failed to fetch customers');
+      const data = await response.json();
+      return Array.isArray(data) ? data.sort((a, b) => (a.name || '').localeCompare(b.name || '')) : [];
     } catch (err) {
-      console.error('Error fetching customers from database:', err);
-      return [];
+      console.error('Database getCustomers error:', err);
+      throw err;
     }
   },
 
@@ -26,22 +25,23 @@ export const customerService = {
   async getCustomer(id) {
     try {
       const response = await fetch(`${API_BASE_URL}/customers/${id}`);
-      if (!response.ok) throw new Error('Customer not found in database');
+      if (!response.ok) throw new Error('Customer not found');
       return await response.json();
     } catch (err) {
-      console.error(`Error fetching customer ${id}:`, err);
+      console.error(`Database getCustomer error for ${id}:`, err);
       return null;
     }
   },
 
-  // 3. Add new customer to Database
+  // 3. Save new customer directly to Database
   async addCustomer(customer) {
     const payload = {
       name: customer.name?.trim(),
       phone: customer.phone?.trim() || '',
       email: customer.email?.trim() || '',
       address: customer.address?.trim() || '',
-      gstNumber: customer.gstNumber?.trim() || '',
+      gstNumber: customer.gstNumber?.trim() || customer.gst_number?.trim() || '',
+      gst_number: customer.gstNumber?.trim() || customer.gst_number?.trim() || '',
       notes: customer.notes?.trim() || ''
     };
 
@@ -52,8 +52,8 @@ export const customerService = {
     });
 
     if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.message || 'Failed to save customer to database');
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Database rejected customer record');
     }
 
     return await response.json();
@@ -68,8 +68,8 @@ export const customerService = {
     });
 
     if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.message || 'Failed to update customer in database');
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Failed to update customer in database');
     }
 
     return await response.json();
@@ -88,7 +88,7 @@ export const customerService = {
     return true;
   },
 
-  // 6. Search customers from live Database
+  // 6. Search customers from Database list
   async searchCustomers(query) {
     const customers = await this.getCustomers();
     if (!query || !query.trim()) return customers;

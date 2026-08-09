@@ -45,11 +45,11 @@ export const REPORT_RANGES = {
 };
 
 export const DEFAULT_SETTINGS = {
-  companyName: 'Your Timber Shop',
+  companyName: 'Sri Murugan Timber & Saw Mill',
   logo: '', // base64 data URL
-  address: '',
+  address: '1/3 A, Pollachi Main Road, Othakkalmandapam, Coimbatore, Tamil Nadu - 641032.',
   gstNumber: '',
-  phone: '',
+  phone: '09047066338',
   terms: '1. Rates are subject to change without prior notice.\n2. Goods once sold will not be taken back.\n3. Payment due within 7 days of delivery.'
 };
 

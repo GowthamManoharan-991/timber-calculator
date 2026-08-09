@@ -51,13 +51,13 @@ export default function History() {
   };
 
   return (
-    <div className="page">
+    <div className="page pb-24 sm:pb-8">
       <Card title={`${t('history.title')} (${quotations.length})`}>
         <Input
           placeholder={t('history.searchPlaceholder')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="search-input"
+          className="search-input mb-4"
         />
 
         {loading ? (
@@ -68,8 +68,8 @@ export default function History() {
             title={quotations.length === 0 ? t('dashboard.noQuotations') : t('customers.noMatch')}
           />
         ) : (
-          <div className="table-wrap">
-            <table className="data-table">
+          <div className="table-wrap overflow-x-auto w-full -mx-2 sm:mx-0 px-2 sm:px-0">
+            <table className="data-table w-full min-w-[580px]">
               <thead>
                 <tr>
                   <th>{t('quotation.number')}</th>
@@ -84,7 +84,7 @@ export default function History() {
                 {filtered.map((q) => (
                   <tr key={q.id}>
                     <td data-label={t('quotation.number')}>
-                      <Link to={`/quotation/${q.id}`} className="link">
+                      <Link to={`/quotation/${q.id}`} className="link font-semibold text-blue-600 dark:text-blue-400">
                         {q.quotationNumber}
                       </Link>
                     </td>
@@ -93,13 +93,13 @@ export default function History() {
                     <td data-label={t('calculator.cft')}>{formatNumber(q.totalCFT, 2)}</td>
                     <td data-label={t('calculator.grandTotal')}>{formatCurrency(q.grandTotal)}</td>
                     <td data-label={t('common.actions')} className="data-table__actions">
-                      <button className="icon-btn" title={t('common.edit')} onClick={() => navigate(`/calculator/${q.id}`)}>
+                      <button className="icon-btn p-1.5" title={t('common.edit')} onClick={() => navigate(`/calculator/${q.id}`)}>
                         ✏️
                       </button>
-                      <button className="icon-btn" title={t('common.duplicate')} onClick={() => handleDuplicate(q.id)}>
+                      <button className="icon-btn p-1.5" title={t('common.duplicate')} onClick={() => handleDuplicate(q.id)}>
                         📄
                       </button>
-                      <button className="icon-btn icon-btn--danger" title={t('common.delete')} onClick={() => setDeleting(q)}>
+                      <button className="icon-btn icon-btn--danger p-1.5" title={t('common.delete')} onClick={() => setDeleting(q)}>
                         🗑️
                       </button>
                     </td>

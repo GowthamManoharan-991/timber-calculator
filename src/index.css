@@ -2010,58 +2010,52 @@ body.dark .modal__footer,
 }
 
 /* ==========================================================================
-   MOBILE RESPONSIVE FIXES (QUOTATION PREVIEW, TABLES & BOTTOM NAV CLEARANCE)
+   MOBILE CALCULATOR / QUOTATION INPUT CARD CONTAINER FIX
    ========================================================================== */
 
-/* 1. Prevent Horizontal Page Scroll on Entire App */
-html, body, #root, .app-shell, .app-main, .main-content {
-  max-width: 100vw !important;
-  overflow-x: hidden !important;
-}
-
-/* 2. Fix Quotation PDF Preview Table Overflow on Mobile */
 @media (max-width: 767px) {
-  /* Scrollable container for PDF preview sheets & tables */
-  .pdf-preview-wrap,
-  .quotation-view,
-  .card_body {
+  /* 1. Prevent nested card containers from overflowing right padding */
+  .wood-section,
+  .wood-section__table-wrap,
+  .wood-table,
+  .wood-row {
     width: 100% !important;
     max-width: 100% !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box !important;
   }
 
-  /* Make PDF preview tables readable and contained */
-  .quotation-preview table,
-  .history-table,
-  .wood-table {
-    min-width: 580px; /* Ensures table headers don't squish unreadably */
+  /* 2. Reduce excessive nested margins/padding on small mobile screens */
+  .wood-section {
+    padding: 0.75rem 0.5rem !important;
   }
 
-  /* Allow top action buttons (Edit, Duplicate, Delete, Print) to scroll smoothly */
-  .quotation-actions,
-  .page-actions {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    padding-bottom: 8px !important;
+  .wood-section__table-wrap {
+    overflow-x: hidden !important;
+  }
+
+  /* 3. Keep 2-column input grid strictly within card bounds */
+  .wood-row {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+    padding: 0.75rem !important;
+    margin: 0 0 0.75rem 0 !important;
+  }
+
+  /* 4. Ensure inputs fit inside grid cells */
+  .wood-row td {
     width: 100% !important;
-    -webkit-overflow-scrolling: touch;
+    padding: 0 !important;
   }
 
-  .quotation-actions button,
-  .page-actions button {
-    flex-shrink: 0 !important;
+  .wood-row__input {
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
-}
 
-/* 3. Add Bottom Clearance for Mobile Fixed Navigation Bar */
-@media (max-width: 767px) {
-  .page-content,
-  .quotation-view,
-  .history-page,
-  .customers-page,
-  .calculator-page {
-    padding-bottom: 90px !important; /* Prevents bottom nav from hiding history rows & buttons */
+  /* 5. Keep the Amount Banner strictly within bounds */
+  .wood-row::after {
+    box-sizing: border-box !important;
+    width: 100% !important;
   }
 }

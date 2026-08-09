@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../../context/AppContext';
 import { useLanguage } from '../context/LanguageContext';
 import QuotationPreview from '../components/quotation/QuotationPreview';
 import Spinner from '../components/ui/Spinner';

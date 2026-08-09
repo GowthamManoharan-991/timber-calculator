@@ -2094,3 +2094,34 @@ body.dark .modal__footer,
     white-space: nowrap !important;
   }
 }
+
+/* Container for Action Buttons */
+.calculator-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+  width: 100%;
+}
+
+/* Save & Generate Button */
+.btn--save-quotation {
+  width: 100%;
+  padding: 14px;
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  border-radius: 12px;
+  border: none;
+}
+
+/* Reset Button below Save button */
+.btn--reset {
+  width: 100%;
+  padding: 10px;
+  background-color: #dc2626 !important; /* Red */
+  color: #ffffff !important;
+  font-weight: 600;
+  border-radius: 12px;
+  border: none;
+}

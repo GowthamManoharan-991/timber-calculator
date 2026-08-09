@@ -155,7 +155,7 @@ export default function Calculator() {
   if (loadingExisting) return <Spinner label={t('common.loading')} />;
 
   return (
-    <div className="page calculator-page">
+    <div className="page calculator-page pb-24 sm:pb-8">
       <Card title={t('calculator.customer')}>
         <CustomerPicker customerId={customerId} onSelect={setCustomerId} error={errors.customer} />
       </Card>
@@ -189,12 +189,26 @@ export default function Calculator() {
 
       <Card title={t('calculator.summary')}>
         <TotalsSummary {...summary} />
-        <div className="form-actions">
-          <Button variant="ghost" onClick={resetForm} disabled={saving}>
-            {t('common.reset')}
-          </Button>
-          <Button onClick={handleSave} disabled={saving}>
+        <div className="form-actions flex flex-col gap-3 mt-6 w-full">
+          {/* Primary Action Button: Save & Generate Quotation (On Top) */}
+          <Button
+            onClick={handleSave}
+            disabled={saving}
+            className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition-all text-base"
+          >
             {saving ? t('common.saving') : id ? t('calculator.update') : t('calculator.saveGenerate')}
+          </Button>
+
+          {/* Reset Action Button: Red and positioned below Save button */}
+          <Button
+            type="button"
+            variant="danger"
+            onClick={resetForm}
+            disabled={saving}
+            className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-all text-sm border-0"
+            style={{ backgroundColor: '#dc2626', color: '#ffffff' }}
+          >
+            {t('common.reset')}
           </Button>
         </div>
       </Card>

@@ -22,9 +22,6 @@ function makeEmptyRow(defaultRate) {
   };
 }
 
-// `getDefaultRate(woodType)` is supplied by the Calculator page from Admin's
-// configured rate rules, so new rows auto-fill a sensible starting rate.
-// Carpenters can still override the value per row.
 export default function WoodSection({ section, onChange, onRemove, canRemove, getDefaultRate }) {
   const { t } = useLanguage();
   const [confirmingRemove, setConfirmingRemove] = useState(false);
@@ -41,7 +38,6 @@ export default function WoodSection({ section, onChange, onRemove, canRemove, ge
     updateSection({
       woodType: value,
       customName: value === CUSTOM_WOOD_TYPE ? section.customName || '' : '',
-      // Auto-fill rate for rows the user hasn't typed a rate into yet.
       rows: section.rows.map((r) => (r.rate ? r : { ...r, rate: newDefaultRate ? String(newDefaultRate) : '' }))
     });
   };
@@ -128,9 +124,16 @@ export default function WoodSection({ section, onChange, onRemove, canRemove, ge
       </div>
 
       <div className="wood-section__footer">
-        <Button size="sm" variant="secondary" onClick={addRow}>
+        {/* Updated Button: High-contrast white background with dark text for dark mode */}
+        <Button
+          size="sm"
+          onClick={addRow}
+          className="btn--add-row !bg-white !text-slate-900 hover:!bg-slate-100 font-bold border-0 shadow-sm transition-colors"
+          style={{ backgroundColor: '#ffffff', color: '#0f172a' }}
+        >
           + {t('calculator.addRow')}
         </Button>
+        
         <div className="wood-section__totals">
           <span>
             {displayName} {t('calculator.sectionTotalCft')}: <strong>{formatNumber(totals.totalCFT, 3)}</strong>

@@ -2060,19 +2060,3 @@ body.dark .modal__footer,
   }
 }
 
-/* Force Mobile Table Alignment and Padding */
-@media (max-width: 767px) {
-  .quotation-doc__meta {
-    text-align: left !important;
-  }
-
-  .quotation-doc table th,
-  .quotation-doc table td {
-    padding: 4px 2px !important;
-    white-space: nowrap !important;
-  }
-
-  #quotation-print-area {
-    padding: 10px !important;
-  }
-}

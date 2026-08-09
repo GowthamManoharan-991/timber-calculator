@@ -1840,3 +1840,78 @@ textarea {
     padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
+
+/* Modal Overlay Backdrop */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: flex-end; /* Align to bottom on mobile */
+  justify-content: center;
+  padding: 0;
+}
+
+@media (min-width: 640px) {
+  .modal-overlay {
+    align-items: center; /* Center on larger screens */
+    padding: 1rem;
+  }
+}
+
+/* Modal Dialog Box */
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  background-color: #0f172a; /* Slate 900 */
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  max-height: 75vh; /* Prevents overflow off-screen */
+  margin-bottom: 75px; /* Pushes modal above fixed bottom navigation bar */
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 640px) {
+  .modal {
+    border-radius: 1rem;
+    max-height: 85vh;
+    margin-bottom: 0;
+  }
+}
+
+/* Header */
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid #1e293b;
+  flex-shrink: 0;
+}
+
+/* Scrollable Body */
+.modal__body {
+  padding: 1rem;
+  overflow-y: auto; /* Internal scrolling for inputs */
+  flex: 1;
+}
+
+/* Footer (Action buttons) */
+.modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-top: 1px solid #1e293b;
+  background-color: #0f172a;
+  flex-shrink: 0; /* Keeps buttons pinned at the bottom */
+}

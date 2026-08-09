@@ -2060,3 +2060,37 @@ body.dark .modal__footer,
   }
 }
 
+/* FORCE MOBILE QUOTATION PREVIEW FIT & LEFT ALIGNMENT */
+@media (max-width: 767px) {
+  /* Fix header meta text alignment */
+  .quotation-doc__meta,
+  .quotation-doc__meta *,
+  #quotation-print-area .quotation-doc__meta {
+    text-align: left !important;
+    align-items: flex-start !important;
+  }
+
+  /* Prevent card overflow */
+  #quotation-print-area,
+  .quotation-doc {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 10px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Ensure table fits horizontally */
+  .quotation-doc table {
+    width: 100% !important;
+    table-layout: auto !important;
+  }
+
+  .quotation-doc th,
+  .quotation-doc td {
+    padding: 4px 3px !important;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+  }
+}

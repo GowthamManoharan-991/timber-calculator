@@ -170,9 +170,10 @@ export default function Calculator() {
       >
         {errors.sections && <p className="field__error">{errors.sections}</p>}
         <div className="wood-section-list">
-          {sections.map((section) => (
+          {sections.map((section, idx) => (
             <WoodSection
               key={section.id}
+              index={idx}
               section={section}
               onChange={(updated) => updateSection(section.id, updated)}
               onRemove={() => removeSection(section.id)}
@@ -180,6 +181,18 @@ export default function Calculator() {
               getDefaultRate={getDefaultRate}
             />
           ))}
+        </div>
+
+        {/* Bottom Add Wood Section Button */}
+        <div className="mt-4 pt-2 flex justify-center">
+          <Button
+            type="button"
+            onClick={addSection}
+            className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl shadow-md text-sm border-0"
+            style={{ backgroundColor: '#f59e0b', color: '#0f172a' }}
+          >
+            + {t('calculator.addSection')} (Teak / Mahagony / Other)
+          </Button>
         </div>
       </Card>
 
@@ -190,7 +203,7 @@ export default function Calculator() {
       <Card title={t('calculator.summary')}>
         <TotalsSummary {...summary} />
         <div className="form-actions flex flex-col gap-3 mt-6 w-full">
-          {/* Primary Action Button: Save & Generate Quotation (On Top) */}
+          {/* Primary Action Button: Save & Generate Quotation */}
           <Button
             onClick={handleSave}
             disabled={saving}

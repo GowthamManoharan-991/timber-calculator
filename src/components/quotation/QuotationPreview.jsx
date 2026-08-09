@@ -95,9 +95,9 @@ export default function QuotationPreview({ quotation, settings }) {
                 style={{
                   display: 'inline-block',
                   color: '#0f172a',
-                  backgroundColor: '#fef08a',
+                  backgroundColor: '#F7BA00',
                   padding: '3px 10px',
-                  borderRadius: '14px',
+                  borderRadius: '5px',
                   fontWeight: '700',
                   fontSize: '12px',
                   marginBottom: '8px'

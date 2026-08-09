@@ -2,19 +2,7 @@ import { calculateRowAmount, calculateRowCFT } from '../../utils/calculations';
 import { formatCurrency, formatNumber } from '../../utils/formatters';
 import { useLanguage } from '../../context/LanguageContext';
 
-// NOTE ON RESPONSIVE LAYOUT:
-// This component renders one <tr> per timber row. On desktop/tablet it's a
-// normal table row (unchanged). On mobile, CSS Grid re-flows this exact
-// same markup into a 2-column card (see index.css "MOBILE: WOOD ROW CARDS"
-// section) - no JSX/logic branching needed, no duplicate markup, and no
-// change to the calculation values themselves.
-//
-// `data-amount-line` carries the pre-formatted "Amount: ₹0.00" string so the
-// mobile-only CSS can render it as a prominent total bar via
-// `content: attr(data-amount-line)` on a pseudo-element, positioned below
-// the input grid and above the Delete Row button using CSS Grid placement.
-
-export default function WoodRow({ row, onChange, onRemove, showRemove }) {
+export default function WoodRow({ row, rowIndex = 0, onChange, onRemove, showRemove }) {
   const { t } = useLanguage();
   const cft = calculateRowCFT(row);
   const amount = calculateRowAmount(row);
@@ -33,7 +21,8 @@ export default function WoodRow({ row, onChange, onRemove, showRemove }) {
 
   return (
     <tr
-      className="wood-row"
+      className="wood-row relative"
+      data-row-number={`Row #${rowIndex + 1}`}
       data-amount-line={`${t('calculator.amount')}: ${formatCurrency(amount)}`}
     >
       {FIELDS.map((f) => (
@@ -71,7 +60,7 @@ export default function WoodRow({ row, onChange, onRemove, showRemove }) {
               &times;
             </span>
             <span className="wood-row__delete-label">
-              {t('calculator.deleteRow')}
+              Delete Row
             </span>
           </button>
         )}

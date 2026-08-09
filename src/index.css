@@ -2125,3 +2125,51 @@ body.dark .modal__footer,
   border-radius: 12px;
   border: none;
 }
+
+/* Mobile Wood Row Identification Header */
+@media (max-width: 767px) {
+  .wood-row::before {
+    content: attr(data-row-number);
+    display: block;
+    grid-column: 1 / -1;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    background-color: rgba(15, 23, 42, 0.5);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    margin-bottom: 0.25rem;
+  }
+}
+
+/* Mobile Wood Row Identification Header - High Contrast Theme Adaptive */
+@media (max-width: 767px) {
+  .wood-row::before {
+    content: attr(data-row-number);
+    display: block;
+    grid-column: 1 / -1;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.4rem 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    /* Light Mode Default: Dark Slate Pill with Crisp White Bold Text */
+    background-color: #334155 !important;
+    color: #ffffff !important;
+    border: 1px solid #475569;
+  }
+}
+
+/* Dark Mode Overrides: Bright Cyan/Amber Badge for High Visibility */
+[data-theme="dark"] .wood-row::before,
+body.dark .wood-row::before,
+.dark .wood-row::before {
+  background-color: #1e293b !important;
+  color: #38bdf8 !important; /* Bright Cyan Text */
+  border: 1px solid #0284c7;
+}

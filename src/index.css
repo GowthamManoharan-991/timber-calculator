@@ -2173,3 +2173,14 @@ body.dark .wood-row::before,
   color: #38bdf8 !important; /* Bright Cyan Text */
   border: 1px solid #0284c7;
 }
+
+/* SAFE AREA FIX FOR PWA / ADD TO HOME SCREEN STANDALONE MODE */
+header,
+.app-header,
+.top-bar,
+.navbar {
+  /* Uses the phone's top notch height dynamically in PWA mode, fallback to standard padding in browser */
+  padding-top: max(12px, env(safe-area-inset-top)) !important;
+  box-sizing: border-box !important;
+}
+

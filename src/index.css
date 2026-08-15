@@ -2184,3 +2184,29 @@ header,
   box-sizing: border-box !important;
 }
 
+/* Base Root Inset Variables */
+:root {
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+}
+
+/* Push Top Header below Notch/Status Bar */
+header,
+nav:first-of-type,
+.top-nav {
+  padding-top: max(12px, var(--sat)) !important;
+}
+
+/* Lift Bottom Navigation above the Home Bar */
+.bottom-nav,
+nav.fixed-bottom,
+footer {
+  padding-bottom: max(10px, var(--sab)) !important;
+}
+
+/* Prevent Content from getting cut off at the bottom */
+#root,
+main,
+.app-container {
+  padding-bottom: calc(70px + var(--sab)) !important;
+}

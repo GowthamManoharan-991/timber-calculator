@@ -2202,7 +2202,7 @@ nav:first-of-type,
 nav.fixed-bottom,
 footer {
   padding-top: 8px !important;
-  padding-bottom: max(22px, calc(var(--sab) + 16px)) !important;
+  padding-bottom: max(34px, calc(var(--sab) + 26px)) !important;
   min-height: calc(72px + var(--sab)) !important;
   box-sizing: content-box !important;
 }
@@ -2212,5 +2212,5 @@ footer {
 main,
 .app-container,
 .main-content {
-  padding-bottom: calc(100px + var(--sab)) !important;
+  padding-bottom: calc(120px + var(--sab)) !important;
 }

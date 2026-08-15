@@ -2190,20 +2190,27 @@ header,
   --sab: env(safe-area-inset-bottom, 0px);
 }
 
-/* 1. Lift Bottom Navigation Bar higher with extra padding */
+/* Push Top Header below Notch/Status Bar */
+header,
+nav:first-of-type,
+.top-nav {
+  padding-top: max(16px, calc(var(--sat) + 8px)) !important;
+}
+
+/* 1. Lift Bottom Navigation higher */
 .bottom-nav,
 nav.fixed-bottom,
 footer {
-  padding-top: 10px !important;
-  /* Gives a guaranteed minimum of 32px or adds extra on top of iOS safe-area */
-  padding-bottom: max(32px, calc(var(--sab) + 24px)) !important;
+  padding-top: 8px !important;
+  padding-bottom: max(22px, calc(var(--sab) + 14px)) !important;
+  min-height: calc(72px + var(--sab)) !important;
   box-sizing: content-box !important;
 }
 
-/* 2. Extra clearance for the main scrollable screen */
+/* 2. Extra space for the main scrollable screen so nothing is blocked */
 #root,
 main,
 .app-container,
 .main-content {
-  padding-bottom: calc(120px + var(--sab)) !important;
+  padding-bottom: calc(100px + var(--sab)) !important;
 }
